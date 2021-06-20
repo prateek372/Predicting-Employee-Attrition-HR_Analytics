@@ -1,0 +1,207 @@
+---
+title: "HR_Analytics"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+## Read data in R  
+
+```{r cars}
+hr_data <- read.csv("/Users/prateek/Desktop/01.2 Coursework/01_Statistical Computing/Proj/WA_Fn-UseC_-HR-Employee-Attrition.csv")
+head(data)
+```
+
+## Data Structure   
+
+```{r}
+str(hr_data)
+```
+### Data Summary  
+
+```{r}
+summary(hr_data)
+```
+
+### checking duplictes   
+### Checking NA   
+
+```{r}
+anyDuplicated(hr_data)  #0 duplicates
+colSums(is.na(hr_data))
+```
+
+## Mean (Avg) Age by Gender  
+
+```{r}
+library(dplyr)
+avg_age <- hr_data %>% select(Gender, Age) %>% group_by(Gender) %>% summarize(avg=mean(Age))
+avg_age
+
+```
+
+
+## Attrition split in Dataset  
+
+```{r}
+library(ggplot2)
+distrinbution <-  table(hr_data$Attrition)
+addmargins(distrinbution)
+round(prop.table(distrinbution), digits = 2)
+```
+
+## Attriton based on Gender  
+
+```{r}
+plot1a <- ggplot(hr_data) +
+        geom_bar(mapping = aes(x = Gender,fill = Attrition))
+plot1a
+
+```
+### No significant realtionship in Attrition based on Gender  
+
+### Attrition seems to be equally likely based on gender  
+
+
+## Total working years VS Attrition  
+
+
+```{r}
+plot1 <- ggplot(hr_data) +
+        geom_bar(mapping = aes(x = TotalWorkingYears,fill = Attrition))
+
+plot1 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+
+```
+
+## Distance from Home VS Attrition  
+```{r}
+plot2 <- ggplot(hr_data) +
+        geom_bar(mapping = aes(x = DistanceFromHome,fill = Attrition),position = "dodge")
+
+plot2 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+```
+
+## Attrition -> Total Working Years and Age  
+```{r}
+plot2_1 <-  ggplot(hr_data,aes(x=TotalWorkingYears,y=Age,color=Attrition)) +               
+            geom_boxplot()+ggtitle("Attrition -> Total Working Years and Age")
+
+plot2_1
+```
+
+## Attrition based on Monthly income and Age  
+
+```{r}
+plot3 <-  ggplot(hr_data,aes(x=Age,y = MonthlyIncome, color=Attrition)) + 
+          geom_point()+ggtitle("Attrition -> Monthly income and Age")
+
+plot3
+```
+
+```{r}
+plot4 <-  ggplot(hr_data,aes(x=Age,y=MonthlyIncome,fill=Attrition)) +               geom_boxplot()+ggtitle("Attrition -> Monthly income and Age")
+
+plot4 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+```
+
+### As expected Younger generation has low income  
+
+### Also, attrition rate is higher with younger generation  
+
+
+## Below Plot represents higher attrition rate because of low Job Satisfaction  
+
+```{r}
+plot6 <-  ggplot(hr_data,aes(x=Attrition,  y =JobSatisfaction,fill=Attrition)) +        geom_boxplot()+ggtitle("Job Satisfaction vs Attrition")
+
+plot6
+```
+
+## We observe low attrition rate in population with Mritial Status as Married  
+```{r}
+plot7 <-  ggplot(data=hr_data, aes(x=MaritalStatus, fill = Attrition)) +
+        geom_bar() + 
+        ggtitle("Attrition based on Maritial Status")
+
+plot7
+```
+
+## We observe high attrition ratio in Departments-> Human Resources & Technical Degree  
+```{r}
+plot8 <- ggplot(hr_data, aes(x = EducationField, fill = Attrition)) + 
+        geom_bar(position = "dodge") +
+        ggtitle("Attrition based on Departments")
+plot8 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+
+```
+
+
+
+
+```{r}
+head(hr_data)
+```
+## Attrition based on Job Satisfaction  
+```{r}
+plot9 <-  ggplot(data=hr_data, aes(x=JobSatisfaction, fill = Attrition)) +
+        geom_bar(position = "dodge")
+        ggtitle("Attrition based on Job Satisfaction")
+        
+plot9 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+```
+
+
+## Attrition based on Work Life Satisfaction  
+```{r}
+
+plot10 <-  ggplot(data=hr_data, aes(x=WorkLifeBalance, fill = Attrition)) +
+        geom_bar(position = "dodge")
+        ggtitle("Attrition based on Work Life Satisfaction")
+        
+plot10 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+```
+
+## Attrition based on Loyalty Index
+
+
+```{r}
+hr_data <- hr_data %>%
+      mutate(loyalty_index = (TotalWorkingYears/ (NumCompaniesWorked + 1)))
+     
+plot11 <- ggplot(hr_data,aes(x=loyalty_index,y = Attrition, color=Attrition)) +
+          geom_point()+ggtitle("Attrition based on Loyalty Index")
+plot11
+```
+
+```{r}
+plot12 <-  ggplot(hr_data,aes(x=WorkLifeBalance,y = JobSatisfaction, color=Attrition)) + geom_point()+ggtitle("Attrition -> Monthly income and Age")
+
+
+plot12 + scale_fill_manual(breaks = c("No", "Yes"), 
+                       values=c("springgreen4", "red2"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
